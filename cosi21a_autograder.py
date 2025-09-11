@@ -1,5 +1,5 @@
 import os, subprocess, re
-import json
+import json, csv
 
 def group(l):
     result = []
@@ -23,8 +23,8 @@ def parse_test_case(c:str) -> dict:
         'message': message[1:]
     }
 
-def main_proc() -> None:
-    root = '/Users/jamespetullo/Downloads/ResheffAbigail-PA0'
+def main_proc(s_name:str, root:str) -> tuple:
+    os.chdir('/Users/jamespetullo/cosi21a_autograder_tool')
     supporting = 'pa0_supporting'
     for i in os.listdir(supporting):
         with open(os.path.join(supporting, i)) as f:
@@ -69,8 +69,50 @@ def main_proc() -> None:
     print(json.dumps(all_groups , indent=4))
     print('passed:', successful)
     print('failed:', failed)
+    return all_groups, successful, failed
+
+
+def produce_sheet(flat_csv:bool = False) -> None:
+    files = [
+        '/Users/jamespetullo/Downloads/DialLindsay-PA0',
+        '/Users/jamespetullo/Downloads/ResheffAbigail-PA0',
+        '/Users/jamespetullo/Downloads/GoldAaron-PA0',
+        '/Users/jamespetullo/Downloads/RittenburgLiam-PA0',
+        '/Users/jamespetullo/Downloads/SchifrinLior-PA0',
+    ]
+    all_grades = []
+    for f in files:
+        all_groups, successfull, failed = main_proc(name:=f.split('/')[-1], f)
+        final_results = {'successful': successfull, 'failed': failed}
+
+        for i in all_groups:
+            if i['enums']:
+                for j in i['enums']:
+                    final_results[f'{i["case"]["name"]}.{j["name"]}'] = j['passed']
+
+            else:
+                final_results[f'{i["case"]["name"]}'] = i['case']['passed']
+
+        
+        all_grades.append((name, final_results))
+    
+
+    os.chdir('/Users/jamespetullo/cosi21a_autograder_tool')
+
+    if flat_csv:
+        keys = sorted({j for _, k in all_grades for j in k},key=lambda x:(x in['successful', 'failed'], x))
+        with open('results.csv', 'w') as f:
+            write = csv.writer(f)
+            write.writerow(['name', *keys])
+            write.writerows([[name]+[j.get(k, False) for k in keys] for name, j in all_grades])
+
+    else:
+        with open('results.csv', 'w') as f:
+            write = csv.writer(f)
+            write.writerows([[name]+[f'{a}: {b}' for a, b in j.items()] for name, j in all_grades])
 
 if __name__ == '__main__':
-    main_proc()
+    produce_sheet()
+
 
 
