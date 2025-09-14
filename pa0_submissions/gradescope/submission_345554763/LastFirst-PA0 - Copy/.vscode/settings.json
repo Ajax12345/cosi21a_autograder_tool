@@ -1,0 +1,10 @@
+{
+    "java.project.sourcePaths": [
+        "LastFirst-PA0\\src\\main",
+        "LastFirst-PA0\\src\\test"
+    ],
+    "java.project.referencedLibraries": [
+        "LastFirst-PA0\\test-lib\\junit-platform-console-standalone-1.11.0.jar"
+    ],
+    "java.format.settings.url": ".vscode/java-formatter.xml"
+}

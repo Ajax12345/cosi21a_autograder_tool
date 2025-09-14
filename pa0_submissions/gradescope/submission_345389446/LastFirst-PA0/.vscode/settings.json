@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "org.junit",
+        "test-lib/**/*.jar"
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
+}
